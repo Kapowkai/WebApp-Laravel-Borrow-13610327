@@ -1,35 +1,32 @@
 <?php
 
-//use Illuminate\Support\Facades\Route;
-//
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
 //Route::get('/', function () {
 //    return view('welcome');
 //});
 
-Route::get('/login','\App\Http\Controllers\User\LoginController@showLoginForm')->name('login');
-Route::get('/auth/redirect','\App\Http\Controllers\User\LoginController@redirectToProvider');
-Route::get('/auth/callback','\App\Http\Controllers\User\LoginController@handleProviderCallback');
+Auth::routes();
 
-Route::post('/logout','\App\Http\Controllers\User\LogoutController@logout')->name('logout');
+//Route::get('/home', 'HomeController@index')->name('home');
 
-//default login user middleware is Auth
-// in blade example use Auth::user()->name;
-Route::group(['middleware'=>'auth'],function(){
-    Route::get('/','\App\Http\Controllers\User\HomeController@index');
-    Route::get('/history','\App\Http\Controllers\User\HistoryController@index');
-    Route::get('/history/{id}','\App\Http\Controllers\User\HistoryController@show');
-    Route::get('/cart','\App\Http\Controllers\User\CartController@index');
-    Route::post('/cart/{id}/add','\App\Http\Controllers\User\CartController@addToCart');
-    Route::post('/cart/{id}/delete','\App\Http\Controllers\User\CartController@removeInCart');
-    Route::post('/cart/delete','\App\Http\Controllers\User\CartController@clearCart');
-    Route::post('/cart','\App\Http\Controllers\User\CartController@createOrder');
+
+Route::group(['middleware' =>'auth'],function (){
+    Route::get('/','NewsFeedController@index');
+    Route::get('/profile/{id}','ProfileController@index');
+    Route::post('/post','PostController@store');
+    Route::post('/post/like/{id}','PostLikeController@store');
+    Route::post('/post/comment/{id}','PostCommentController@store');
+    Route::post('/follow/{id}','FollowController@store');
+    Route::post('/profile','ProfileController@store');
 });
 
-Route::get('/back-office/login','\App\Http\Controllers\Backoffice\LoginController@showLoginForm');
-Route::post('/back-office/login','\App\Http\Controllers\Backoffice\LoginController@login');
-Route::post('/back-office/logout','\App\Http\Controllers\Backoffice\LoginController@logout');
-
-Route::group(['prefix'=>'back-office','middleware'=>['auth.admin']],function (){
-    Route::resource('/item','\App\Http\Controllers\Backoffice\ItemController');
-    Route::resource('/order','\App\Http\Controllers\Backoffice\OrderController');
-});
